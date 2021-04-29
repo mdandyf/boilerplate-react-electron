@@ -1,42 +1,50 @@
 import Axios from 'axios';
 
+import {AUTH_URL, LOGIN_URI, SIGN_UP_URI} from '../../constants/locations';
+
+// =====================================================================================
+// This section will be used for Authentication (Login & Sign Up)
+// =====================================================================================
+
 export const LOGIN = 'LOGIN';
 
 export const login = (email, password) => {
-    try {
-        const base64Pass = new Buffer(password).toString('base64');
-        const url = AUTH_URL + LOGIN_URI + KEY + API_KEY;
-        const response = fetch(
-            url,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email,
-                    password: base64Pass,
-                    returnSecureToken: true
-                })
+    return async dispatch => {
+        try {
+            const base64Pass = new Buffer(password).toString('base64');
+            const url = AUTH_URL + LOGIN_URI;
+            const response = fetch(
+                url,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password: base64Pass,
+                        returnSecureToken: true
+                    })
+                }
+            )
+            .then(res => res.json())
+            .then(data => console.log(data));
+    
+            if (!response.ok) {
+                throw new Error('Something went wrong!');
             }
-        )
-        .then(res => res.json())
-        .then(data => console.log(data));
-
-         //    if (!response.ok) {
-        //         throw new Error('Something went wrong!');
-        //     }
-
-        //     const respData = await response.json();
-        //     console.log(respData);
+    
+            const respData = await response.json();
+            console.log(respData);
             //dispatch({ type: SIGN_UP, data: respData });
-            //dispatch(authenticate(respData.idToken, respData.localId, parseInt(respData.expiresIn) * 1000));
-
-            //const expiryDate = new Date(new Date().getTime() + parseInt(respData.expiresIn) * 1000);
-            //saveDataToStorage(respData.idToken, respData.localId, expiryDate); */
-    } catch(error) {
-         // Send to analytics
-         throw (err);
+            dispatch(authenticate(respData.idToken, respData.localId, parseInt(respData.expiresIn) * 1000));
+    
+            const expiryDate = new Date(new Date().getTime() + parseInt(respData.expiresIn) * 1000);
+            saveDataToStorage(respData.idToken, respData.localId, expiryDate);
+        } catch(error) {
+             // Send to analytics
+             throw (error);
+        }
     }
 }
 
@@ -47,7 +55,7 @@ export const signUp = (email, password) => {
         try {
             let base64Pass = new Buffer(password).toString('base64');
             const response = await fetch(
-                AUTH_URL + SIGN_UP_URI + KEY + API_KEY,
+                AUTH_URL + SIGN_UP_URI,
                 {
                     method: 'POST',
                     headers: {
