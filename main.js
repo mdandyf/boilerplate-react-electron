@@ -1,7 +1,18 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 
 function createWindow () {
+  const menuTemplate = [
+    {
+      label: 'File',
+      submenu: [
+        { 
+          label: 'Exit' 
+        }
+      ]
+    }
+  ];
+
   const win = new BrowserWindow({
     width: 1920,
     height: 1080,
@@ -11,6 +22,8 @@ function createWindow () {
   })
 
   win.loadURL('http://localhost:3000')
+  const mainMenu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(mainMenu);
 }
 
 app.whenReady().then(() => {
