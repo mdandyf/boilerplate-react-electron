@@ -14,8 +14,17 @@ const AuthForm = (props) => {
           onSubmit={props.handleLoginClick}
         >
           <Form.Group controlId="formEmail">
-            <Form.Label className="login-label-small">Email</Form.Label>
-            <Form.Control type="input" placeholder="Email" required />
+            <Form.Label 
+              className="login-label-small"
+            >
+                Email
+            </Form.Label>
+            <Form.Control 
+              onChange={props.onEmailChange} 
+              type="input" 
+              placeholder="Email" 
+              required 
+            />
             <Form.Control.Feedback type="invalid">
               Please input an Email
             </Form.Control.Feedback>
@@ -24,6 +33,7 @@ const AuthForm = (props) => {
             <Form.Label className="login-label-small">Password</Form.Label>
             <InputGroup>
               <Form.Control
+                onChange={props.onPasswordChange}
                 type={props.isPassword}
                 placeholder="Password"
                 required

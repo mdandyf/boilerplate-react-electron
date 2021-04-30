@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { Container, Row, Col } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { Container, Row, Col, Alert, Button, Form, InputGroup, Spinner } from "react-bootstrap";
 import AuthForm from "../../components/auth/AuthForm";
-import * as authAction from '../../store/actions/auth'
+import * as authAction from "../../store/actions/auth";
 import "../../css/auth/auth.css";
 
 const AuthPage = (props) => {
@@ -26,16 +26,17 @@ const AuthPage = (props) => {
     }
   };
 
-  const handleForgotPasswordClick = () => {
-    props.history.push("/forget-password");
-  };
+  const handleEmailChange = (event) => setUsername(event.target.value);
 
-  const handleRememberMeChange = (e) => {
+  const handlePasswordChange = (event) => setUserpass(event.target.value);
+
+  const handleForgotPasswordClick = () =>
+    props.history.push("/forget-password");
+
+  const handleRememberMeChange = (event) =>
     console.log("Remember me is changed");
-  };
 
   const handleLoginClick = (event) => {
-    console.log("Login is clicked");
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -45,33 +46,45 @@ const AuthPage = (props) => {
     setIsValidated(true);
   };
 
-  const authenticate = async() => {
+  const authenticate = async () => {
     let action;
     setIsLoading(true);
 
     try {
-        action = authAction.login(username, userpass);
-        await dispatch(action);
+      console.log(username);
+      action = authAction.login(username, userpass);
+      await dispatch(action);
     } catch (err) {
-        setError(err);
+      setError(err);
     }
-    setIsLoading(false);
-  }
 
-  return (
+    setIsLoading(false);
+  };
+
+  return !isLoading && error ? (
+    <Alert variant="danger" dismissible>
+      <Alert.Heading>Error</Alert.Heading>
+      <p>{error}</p>
+      <div className="d-flex justify-content-end">
+        <Button variant="outline-success">Close</Button>
+      </div>
+    </Alert>
+  ) : (
     <Container className="container-login" fluid>
       <Row className="login-page">
-        <Col lg={6} sm={0} className="column-image img-fullbackground"></Col>
+        <Col lg={6} sm={0} className="column-image img-fullbackground"/>
         <Col lg={6} sm={2} className="column-form">
           <AuthForm
             isPassword={isPassword}
             isValidated={isValidated}
             isLoading={isLoading}
-            handleButtonClick={authenticate}
+            onEmailChange={handleEmailChange}
+            onPasswordChange={handlePasswordChange}
             handleEyeClick={handleEyeClick}
             handleLoginClick={handleLoginClick}
             handleRememberMeChange={handleRememberMeChange}
             handleForgotPasswordClick={handleForgotPasswordClick}
+            handleButtonClick={authenticate}
           />
         </Col>
       </Row>

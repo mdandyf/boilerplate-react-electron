@@ -10,8 +10,7 @@ import PrivateRoute from './PrivateRoute';
 
 const Routes = (props) => {
 
-    //const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-    const isAuthenticated = false
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     console.log(isAuthenticated);
 
     return (

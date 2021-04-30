@@ -8,8 +8,10 @@ const initialState = {
 }
 
 export default function authReducer(state = initialState, action) {
+    console.log(action.type);
     switch (action.type) {
         case 'LOGIN':
+            console.log('now is login');
             return { ...state, isLoading: true };
         case 'SIGN_UP':
             return { ...state, isLoading: true };
