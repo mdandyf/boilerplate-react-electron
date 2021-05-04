@@ -12,45 +12,32 @@ import {
 // =====================================================================================
 
 export const LOGIN = "LOGIN";
+export const LOGIN_FAILED = "LOGIN_FAILED";
 
-export const login = (email, password) => {
-  return dispatch => {
-    try {
-      //const base64Pass = new Buffer(password).toString('base64');
-      const url = HEROKU_URL + AUTH_URL + LOGIN_URI;
-      const response = Axios.post(url, {
+export const login = async (email, password) => {
+  const url = HEROKU_URL + AUTH_URL + LOGIN_URI;
+  return Axios.post(
+      url,
+      {
         email: email,
         password: password,
-      }, {
-          headers: {
-            "Content-Type": "application/json",
-            "Accept":"*/*",
-            "Access-Control-Allow-Origin": "*",
-            "Connection": "keep-alive",
-            "Origin": "http://localhost:3000",
-          }
-      })
-      .then(response => {
-        console.log(response)
-        dispatch(authenticate(response.data.access_token, "xxx11", parseInt(30) * 1000));
-        const expiryDate = new Date(new Date().getTime() + parseInt(30) * 1000);
-        saveDataToStorage(response.data.access_token, "xxx11", expiryDate);
-      })
-      .catch(error => console.log(error));
-
-      
-      } catch (error) {
-      // Send to analytics
-      console.log(error);
-      throw error;
-    }
-  };
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "*/*",
+          "Access-Control-Allow-Origin": "*",
+          "Connection": "keep-alive",
+          "Origin": "http://localhost:3000",
+        },
+      }
+    )
 };
 
 export const SIGN_UP = "SIGN_UP";
 
 export const signUp = (email, password) => {
-  return async dispatch => {
+  return async (dispatch) => {
     try {
       let base64Pass = new Buffer(password).toString("base64");
       const response = await fetch(AUTH_URL + SIGN_UP_URI, {
@@ -96,7 +83,7 @@ export const signUp = (email, password) => {
 export const AUTHENTICATE = "AUTHENTICATE";
 
 export const authenticate = (accessToken, userId, expiryTime) => {
-  return dispatch => {
+  return (dispatch) => {
     //dispatch(setLogoutTimer(expiryTime));
     dispatch({ type: AUTHENTICATE, accessToken: accessToken, userId: userId });
   };

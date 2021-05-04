@@ -1,17 +1,32 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { Form, Button, InputGroup, Spinner } from "react-bootstrap";
 import { FaEye } from "react-icons/fa";
 import Colors from "../../constants/colors";
 
 const AuthForm = (props) => {
+  const [isValidated, setIsValidated] = useState(true);
+
+  const onSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      setIsValidated(false);
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      setIsValidated(true);
+      props.handleLogin()
+    }
+  }
+
+
   return (
     <div className="content">
       <div className="login-title">Login</div>
       <div className="login-form">
         <Form
           noValidate
-          validated={props.isValidated}
-          onSubmit={props.handleLoginClick}
+          validated={!isValidated}
+          onSubmit={onSubmit}
         >
           <Form.Group controlId="formEmail">
             <Form.Label 
@@ -63,7 +78,6 @@ const AuthForm = (props) => {
             />
           </Form.Group>
           <Button
-            onClick={props.handleButtonClick}
             style={{ backgroundColor: Colors.secondary }}
             type="submit"
             block

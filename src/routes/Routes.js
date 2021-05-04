@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
 import AuthPage from '../pages/auth/AuthPage';
 import ForgetPasswordPage from '../pages/auth/ForgetPasswordPage';
@@ -14,13 +14,13 @@ const Routes = (props) => {
     console.log(isAuthenticated);
 
     return (
-        <BrowserRouter>
+        <Router>
             <Switch>
                 <Route exact path="/login" component={AuthPage} />
                 <Route exact path="/forget-password" component={ForgetPasswordPage} />
                 <PrivateRoute exact path="/" isAuthenticated={isAuthenticated} component={MainPage} />
             </Switch>
-        </BrowserRouter>
+        </Router>
     );
 }
 

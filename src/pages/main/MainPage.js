@@ -13,7 +13,7 @@ const MainPage = (props) => {
             <NavDropdown.Item href="#action/3.2">Open Existing File</NavDropdown.Item>
             <NavDropdown.Item href="#action/3.3">Close Current File</NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item href="#action/3.4">Exit</NavDropdown.Item>
+            <NavDropdown.Item href="/login">Logout</NavDropdown.Item>
           </NavDropdown>
         </Nav>
         <Form inline>

@@ -4,20 +4,22 @@ const initialState = {
     isAuthenticated: false,
     isLoading: false,
     accessToken: '',
-    userId: ''
+    userId: '',
+    error: '',
+    errorMessage: '',
 }
 
-export default function authReducer(state = initialState, action) {
+export default (state = initialState, action) => {
     console.log(action.type);
     switch (action.type) {
         case 'LOGIN':
-            console.log('now is login');
             return { ...state, isLoading: true };
         case 'SIGN_UP':
             return { ...state, isLoading: true };
+        case 'LOGIN_FAILED':
+            return { ...state, isLoading: false, error: action.error, errorMessage: action.errorMessage };
         case 'AUTHENTICATE':
-            console.log('now is authenticated');
-            return { ...state, accessToken: action.accessToken, userId: action.userId, isAuthenticated: true, isLoading: false };
+            return { ...state, isLoading: false, accessToken: action.accessToken, userId: action.userId, isAuthenticated: true };
         default:
             return state;
     }

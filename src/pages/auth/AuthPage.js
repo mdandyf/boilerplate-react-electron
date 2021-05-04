@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Container, Row, Col, Alert, Button, Form, InputGroup, Spinner } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+} from "react-bootstrap";
 import AuthForm from "../../components/auth/AuthForm";
 import * as authAction from "../../store/actions/auth";
 import "../../css/auth/auth.css";
@@ -9,14 +13,11 @@ const AuthPage = (props) => {
   const [username, setUsername] = useState("");
   const [userpass, setUserpass] = useState("");
 
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
   const [isPassword, setIsPassword] = useState("password");
-  const [isValidated, setIsValidated] = useState(false);
-
-  const [error, setError] = useState();
+  
   const dispatch = useDispatch();
+
+  const isLoading = useSelector(state => state.auth.isLoading)
 
   const handleEyeClick = () => {
     if (isPassword === "password") {
@@ -36,55 +37,66 @@ const AuthPage = (props) => {
   const handleRememberMeChange = (event) =>
     console.log("Remember me is changed");
 
-  const handleLoginClick = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+  const authenticate = useCallback(() => {
+        dispatch({
+          type: authAction.LOGIN,
+        })
+        authAction
+          .login(username, userpass)
+          .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+              dispatch({
+                type: authAction.AUTHENTICATE,
+                accessToken: response.data.access_token,
+                userId: "M3953",
+              });
+              const expiryDate = new Date(
+                new Date().getTime() + parseInt(30) * 1000
+              );
+              const dataToSave = JSON.stringify({
+                accessToken: response.data.access_token,
+                userId: "M3953",
+                expiryDate: expiryDate.toISOString(),
+              });
+              localStorage.setItem("UserData", dataToSave);
+              props.history.push('/')
+            } else if (response.status === 401) {
+              dispatch({
+                type: authAction.LOGIN_FAILED,
+                errorMessage: 'User is not authorized'
+              });
+            } else if ((response.status === 442) || (response.status === 400)) {
+              dispatch({
+                type: authAction.LOGIN_FAILED,
+                errorMessage: 'Request is not authorized'
+              });
+            }
+          })
+          .catch((err) => {
+            alert('Login has failed. Please try again!!')
+            dispatch({
+              type: authAction.LOGIN_FAILED,
+              error: err,
+              errorMessage: 'Request is not authorized'
+            });
+          });
+  }, [username, userpass]);
 
-    setIsValidated(true);
-  };
-
-  const authenticate = async () => {
-    let action;
-    setIsLoading(true);
-
-    try {
-      console.log(username);
-      action = authAction.login(username, userpass);
-      await dispatch(action);
-    } catch (err) {
-      setError(err);
-    }
-
-    setIsLoading(false);
-  };
-
-  return !isLoading && error ? (
-    <Alert variant="danger" dismissible>
-      <Alert.Heading>Error</Alert.Heading>
-      <p>{error}</p>
-      <div className="d-flex justify-content-end">
-        <Button variant="outline-success">Close</Button>
-      </div>
-    </Alert>
-  ) : (
+  return (
     <Container className="container-login" fluid>
       <Row className="login-page">
-        <Col lg={6} sm={0} className="column-image img-fullbackground"/>
+        <Col lg={6} sm={0} className="column-image img-fullbackground" />
         <Col lg={6} sm={2} className="column-form">
           <AuthForm
             isPassword={isPassword}
-            isValidated={isValidated}
             isLoading={isLoading}
             onEmailChange={handleEmailChange}
             onPasswordChange={handlePasswordChange}
+            handleLogin={authenticate}
             handleEyeClick={handleEyeClick}
-            handleLoginClick={handleLoginClick}
             handleRememberMeChange={handleRememberMeChange}
             handleForgotPasswordClick={handleForgotPasswordClick}
-            handleButtonClick={authenticate}
           />
         </Col>
       </Row>

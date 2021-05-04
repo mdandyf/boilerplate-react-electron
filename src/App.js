@@ -21,9 +21,7 @@ export default function App() {
     port: 8070 // the port your remotedev server is running at
   })
   
-  const store = createStore(rootReducer,composeEnhancers(
-    applyMiddleware(ReduxThunk)
-  ));
+  const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
   return (
     <div className="App">
